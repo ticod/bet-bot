@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 import javax.security.auth.login.LoginException;
 import java.util.HashSet;
@@ -20,9 +22,12 @@ public class BetBot extends ListenerAdapter {
             System.exit(1);
         }
 
-        JDA jda = JDABuilder.createLight(args[0], GatewayIntent.GUILD_MESSAGES, GatewayIntent.DIRECT_MESSAGES)
+        JDA jda = JDABuilder.createLight(args[0])
+                .setChunkingFilter(ChunkingFilter.ALL) // enable member chunking for all guilds
+                .setMemberCachePolicy(MemberCachePolicy.ALL) // ignored if chunking enabled
+                .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .addEventListeners(new BetBot())
-                .setActivity(Activity.competing("Bet Bot!"))
+                .setActivity(Activity.competing("~~help"))
                 .build();
 
         jda.upsertCommand("ping", "Calculate ping of the bot").queue();
@@ -32,6 +37,14 @@ public class BetBot extends ListenerAdapter {
         int i = 1;
         channel.sendMessage("User List").queue();
         for (User u : users) {
+            channel.sendMessage(i++ + ". " + u.getAsMention()).queue();
+        }
+    }
+
+    private static void showChannelUsers(MessageChannel channel) {
+        int i = 1;
+        channel.sendMessage("User List").queue();
+        for (User u : channel.getJDA().getUsers()) {
             channel.sendMessage(i++ + ". " + u.getAsMention()).queue();
         }
     }
@@ -61,6 +74,10 @@ public class BetBot extends ListenerAdapter {
                         });
             }
 
+            if (commandArgs[0].equalsIgnoreCase("user")) {
+                showChannelUsers(channel);
+            }
+
             if (commandArgs[0].equalsIgnoreCase("hello")) {
                 channel.sendMessage("Hello! " + user.getAsMention()).queue();
             }
@@ -76,10 +93,6 @@ public class BetBot extends ListenerAdapter {
             }
 
             if (commandArgs[0].equalsIgnoreCase("set") && commandArgs.length > 1) {
-                for (User u : event.getJDA().getUsers()) {
-                    channel.sendMessage(":: " + u.getAsMention()).queue();
-                }
-
                 try {
                     User target = event.getJDA().getUserByTag(commandArgs[1]);
                     users.add(target);
