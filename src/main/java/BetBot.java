@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import javax.security.auth.login.LoginException;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 public class BetBot extends ListenerAdapter {
@@ -20,14 +19,13 @@ public class BetBot extends ListenerAdapter {
             System.out.println("You have to provide a token as first argument!");
             System.exit(1);
         }
-        // args[0] should be the token
-        // We don't need any intents for this bot. Slash commands work without any intents!
+
         JDA jda = JDABuilder.createLight(args[0], GatewayIntent.GUILD_MESSAGES, GatewayIntent.DIRECT_MESSAGES)
                 .addEventListeners(new BetBot())
                 .setActivity(Activity.competing("Bet Bot!"))
                 .build();
 
-        jda.upsertCommand("ping", "Calculate ping of the bot").queue(); // This can take up to 1 hour to show up in the client
+        jda.upsertCommand("ping", "Calculate ping of the bot").queue();
     }
 
     private static void showUsers(MessageChannel channel) {
@@ -57,7 +55,7 @@ public class BetBot extends ListenerAdapter {
 
             if (commandArgs[0].equalsIgnoreCase("ping")) {
                 long time = System.currentTimeMillis();
-                channel.sendMessage("Pong!") /* => RestAction<Message> */
+                channel.sendMessage("Pong!")
                         .queue(response -> {
                             response.editMessageFormat("Pong: %d ms", System.currentTimeMillis() - time).queue();
                         });
@@ -119,11 +117,11 @@ public class BetBot extends ListenerAdapter {
 
     @Override
     public void onSlashCommand(SlashCommandEvent event) {
-        if (!event.getName().equals("ping")) return; // make sure we handle the right command
+        if (!event.getName().equals("ping")) return;
         long time = System.currentTimeMillis();
-        event.reply("Pong!").setEphemeral(true) // reply or acknowledge
+        event.reply("Pong!").setEphemeral(true)
                 .flatMap(v ->
-                        event.getHook().editOriginalFormat("Pong: %d ms", System.currentTimeMillis() - time) // then edit original
-                ).queue(); // Queue both reply and edit
+                        event.getHook().editOriginalFormat("Pong: %d ms", System.currentTimeMillis() - time)
+                ).queue();
     }
 }
