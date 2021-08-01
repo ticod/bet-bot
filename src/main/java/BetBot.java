@@ -37,7 +37,7 @@ public class BetBot extends ListenerAdapter {
         int i = 1;
         channel.sendMessage("User List").queue();
         for (User u : users) {
-            channel.sendMessage(i++ + ". " + u.getAsMention()).queue();
+            channel.sendMessage(i++ + ". " + u.getName()).queue();
         }
     }
 
@@ -45,7 +45,7 @@ public class BetBot extends ListenerAdapter {
         int i = 1;
         channel.sendMessage("User List").queue();
         for (User u : channel.getJDA().getUsers()) {
-            channel.sendMessage(i++ + ". " + u.getAsMention()).queue();
+            channel.sendMessage(i++ + ". " + u.getName()).queue();
         }
     }
 
@@ -94,7 +94,7 @@ public class BetBot extends ListenerAdapter {
 
             if (commandArgs[0].equalsIgnoreCase("set") && commandArgs.length > 1) {
                 try {
-                    User target = event.getJDA().getUserByTag(commandArgs[1]);
+                    User target = event.getJDA().getUserById(commandArgs[1].substring(3, 21));
                     users.add(target);
                     channel.sendMessage("Set " + target.getAsMention()).queue();
                 } catch (Exception e) {
