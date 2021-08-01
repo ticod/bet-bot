@@ -23,8 +23,8 @@ public class BetBot extends ListenerAdapter {
         }
 
         JDA jda = JDABuilder.createLight(args[0])
-                .setChunkingFilter(ChunkingFilter.ALL) // enable member chunking for all guilds
-                .setMemberCachePolicy(MemberCachePolicy.ALL) // ignored if chunking enabled
+                .setChunkingFilter(ChunkingFilter.ALL)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .addEventListeners(new BetBot())
                 .setActivity(Activity.competing("~~help"))
