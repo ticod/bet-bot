@@ -38,7 +38,6 @@ public class BetBot extends ListenerAdapter {
 
     private static void showUsers(MessageChannel channel) {
         int i = 1;
-        channel.sendMessage("Betting User List").queue();
         StringBuilder sb = new StringBuilder();
         for (User u : users) {
             if (!u.isBot()) {
@@ -51,14 +50,13 @@ public class BetBot extends ListenerAdapter {
 
     private static void showChannelUsers(MessageChannel channel) {
         int i = 1;
-        channel.sendMessage("User List").queue();
         StringBuilder sb = new StringBuilder();
         for (User u : channel.getJDA().getUsers()) {
             if (!u.isBot()) {
                 sb.append(i++).append(". ").append(u.getName()).append("\n");
             }
         }
-        eb.setTitle("User List").setDescription(sb.toString());
+        eb.setTitle("Betting User List").setDescription(sb.toString());
         channel.sendMessage(eb.build()).queue();
     }
 
