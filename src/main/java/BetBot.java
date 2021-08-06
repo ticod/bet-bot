@@ -157,14 +157,37 @@ public class BetBot extends ListenerAdapter {
 
             if (commandArgs[0].equalsIgnoreCase("bet")) {
 
-                if (commandArgs[1].equalsIgnoreCase("set")) {
+                if (commandArgs[1].equalsIgnoreCase("start")) {
+                    betInfo.clear();
+                    betInfo.setTitle(commandArgs[2]);
+                    betInfo.setUser(user);
+                }
 
+                if (commandArgs[1].equalsIgnoreCase("end")) {
+                    betInfo.clear();
                 }
 
                 if (commandArgs[1].equalsIgnoreCase("leaderboard")) {
-
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("\uD83D\uDC4D\n");
+                    for (User u : betInfo.getAgree().keySet()) {
+                        sb.append(u.getAsTag())
+                                .append(": ")
+                                .append(betInfo.getAgree().get(u))
+                                .append("\n");
+                    }
+                    sb.append("\n\uD83D\uDC4E\n");
+                    for (User u : betInfo.getDisagree().keySet()) {
+                        sb.append(u.getAsTag())
+                                .append(": ")
+                                .append(betInfo.getDisagree().get(u))
+                                .append("\n");
+                    }
+                    eb.setTitle("- " + betInfo.getTitle())
+                            .setAuthor(betInfo.getUser().getAsTag())
+                            .setDescription(sb.toString());
+                    channel.sendMessage(eb.build()).queue();
                 }
-
             }
         }
     }
@@ -181,12 +204,14 @@ public class BetBot extends ListenerAdapter {
 
     static class BetInfo {
         private String title;
+        private User user;
         private Integer totalPoint;
         private Map<User, Integer> agree;
         private Map<User, Integer> disagree;
 
         public BetInfo() {
             this.title = "";
+            this.user = null;
             this.totalPoint = 0;
             this.agree = new HashMap<>();
             this.disagree = new HashMap<>();
@@ -224,8 +249,17 @@ public class BetBot extends ListenerAdapter {
             this.disagree = disagree;
         }
 
+        public User getUser() {
+            return user;
+        }
+
+        public void setUser(User user) {
+            this.user = user;
+        }
+
         public void clear() {
             this.title = "";
+            this.user = null;
             this.totalPoint = 0;
             this.agree.clear();
             this.disagree.clear();
