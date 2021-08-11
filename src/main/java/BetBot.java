@@ -36,30 +36,6 @@ public class BetBot extends ListenerAdapter {
         jda.upsertCommand("ping", "Calculate ping of the bot").queue();
     }
 
-    private static void showUsers(MessageChannel channel) {
-        int i = 1;
-        StringBuilder sb = new StringBuilder();
-        for (User u : users) {
-            if (!u.isBot()) {
-                sb.append(i++).append(". ").append(u.getName()).append("\n");
-            }
-        }
-        eb.setTitle("User List").setDescription(sb.toString());
-        channel.sendMessage(eb.build()).queue();
-    }
-
-    private static void showChannelUsers(MessageChannel channel) {
-        int i = 1;
-        StringBuilder sb = new StringBuilder();
-        for (User u : channel.getJDA().getUsers()) {
-            if (!u.isBot()) {
-                sb.append(i++).append(". ").append(u.getName()).append("\n");
-            }
-        }
-        eb.setTitle("Betting User List").setDescription(sb.toString());
-        channel.sendMessage(eb.build()).queue();
-    }
-
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         Message msg = event.getMessage();
@@ -94,16 +70,28 @@ public class BetBot extends ListenerAdapter {
                 showChannelUsers(channel);
             }
 
-            if (commandArgs[0].equalsIgnoreCase("bet")) {
-                showUsers(channel);
-            }
-
             if (commandArgs[0].equalsIgnoreCase("hello")) {
                 channel.sendMessage("Hello! " + user.getAsMention()).queue();
             }
 
             if (commandArgs[0].equalsIgnoreCase("who")) {
                 showUsers(channel);
+            }
+
+            if (commandArgs[0].equalsIgnoreCase("dice")) {
+                int i = 1;
+                StringBuilder sb = new StringBuilder();
+                for (User u : users) {
+                    sb.append(i++).append(". ")
+                            .append(u.getAsMention())
+                            .append(": ")
+                            .append(Math.round(Math.random() * 100))
+                            .append("\n");
+                }
+                eb.setTitle("DICE")
+                        .setAuthor(user.getAsMention())
+                        .setDescription(sb.toString());
+                channel.sendMessage(eb.build()).queue();
             }
 
             if (commandArgs[0].equalsIgnoreCase("set") && commandArgs.length == 1) {
@@ -155,8 +143,13 @@ public class BetBot extends ListenerAdapter {
                 channel.sendMessage(eb.build()).queue();
             }
 
-            if (commandArgs[0].equalsIgnoreCase("bet")) {
+            if (commandArgs[0].equalsIgnoreCase("start")) {
+                betInfo.clear();
+                betInfo.setTitle(commandArgs[2]);
+                betInfo.setUser(user);
+            }
 
+            if (commandArgs[0].equalsIgnoreCase("bet")) {
                 if (commandArgs[1].equalsIgnoreCase("start")) {
                     betInfo.clear();
                     betInfo.setTitle(commandArgs[2]);
@@ -188,6 +181,30 @@ public class BetBot extends ListenerAdapter {
                             .setDescription(sb.toString());
                     channel.sendMessage(eb.build()).queue();
                 }
+
+                if (commandArgs[1].equalsIgnoreCase("set")) {
+                    User target = event.getJDA().getUserById(commandArgs[2].substring(3, 21));
+                    try {
+                        if (commandArgs[3].equalsIgnoreCase("y")) {
+                            betInfo.getAgree().put(target, Integer.parseInt(commandArgs[4]));
+                            eb.setTitle(target.getAsTag())
+                                    .setDescription(commandArgs[4] + " / " + commandArgs[3]);
+                        } else if (commandArgs[3].equalsIgnoreCase("n")) {
+                            betInfo.getDisagree().put(target, Integer.parseInt(commandArgs[4]));
+                            eb.setTitle(target.getAsTag())
+                                    .setDescription(commandArgs[4] + " / " + commandArgs[3]);
+                        } else {
+                            eb.setTitle("~~bet set (user) (y/n) (point)");
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                    channel.sendMessage(eb.build()).queue();
+                }
+
+                if (commandArgs[1].equalsIgnoreCase("reset")) {
+
+                }
             }
         }
     }
@@ -202,67 +219,27 @@ public class BetBot extends ListenerAdapter {
                 ).queue();
     }
 
-    static class BetInfo {
-        private String title;
-        private User user;
-        private Integer totalPoint;
-        private Map<User, Integer> agree;
-        private Map<User, Integer> disagree;
-
-        public BetInfo() {
-            this.title = "";
-            this.user = null;
-            this.totalPoint = 0;
-            this.agree = new HashMap<>();
-            this.disagree = new HashMap<>();
+    private static void showUsers(MessageChannel channel) {
+        int i = 1;
+        StringBuilder sb = new StringBuilder();
+        for (User u : users) {
+            if (!u.isBot()) {
+                sb.append(i++).append(". ").append(u.getName()).append("\n");
+            }
         }
+        eb.setTitle("User List").setDescription(sb.toString());
+        channel.sendMessage(eb.build()).queue();
+    }
 
-        public String getTitle() {
-            return title;
+    private static void showChannelUsers(MessageChannel channel) {
+        int i = 1;
+        StringBuilder sb = new StringBuilder();
+        for (User u : channel.getJDA().getUsers()) {
+            if (!u.isBot()) {
+                sb.append(i++).append(". ").append(u.getName()).append("\n");
+            }
         }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public Integer getTotalPoint() {
-            return totalPoint;
-        }
-
-        public void setTotalPoint(Integer totalPoint) {
-            this.totalPoint = totalPoint;
-        }
-
-        public Map<User, Integer> getAgree() {
-            return agree;
-        }
-
-        public void setAgree(Map<User, Integer> agree) {
-            this.agree = agree;
-        }
-
-        public Map<User, Integer> getDisagree() {
-            return disagree;
-        }
-
-        public void setDisagree(Map<User, Integer> disagree) {
-            this.disagree = disagree;
-        }
-
-        public User getUser() {
-            return user;
-        }
-
-        public void setUser(User user) {
-            this.user = user;
-        }
-
-        public void clear() {
-            this.title = "";
-            this.user = null;
-            this.totalPoint = 0;
-            this.agree.clear();
-            this.disagree.clear();
-        }
+        eb.setTitle("Betting User List").setDescription(sb.toString());
+        channel.sendMessage(eb.build()).queue();
     }
 }
