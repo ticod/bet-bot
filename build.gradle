@@ -18,6 +18,8 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
     implementation("net.dv8tion:JDA:4.3.0_277")
+    annotationProcessor('org.projectlombok:lombok:1.18.20')
+    compileOnly("org.projectlombok:lombok:1.18.20")
 }
 
 test {
