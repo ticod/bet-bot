@@ -41,6 +41,7 @@ public class BetBot extends ListenerAdapter {
         Message msg = event.getMessage();
         MessageChannel channel = event.getChannel();
         User user = event.getAuthor();
+        eb.clear();
 
         if (user.isBot()) {
             return;
@@ -78,22 +79,6 @@ public class BetBot extends ListenerAdapter {
                 showUsers(channel);
             }
 
-            if (commandArgs[0].equalsIgnoreCase("dice")) {
-                int i = 1;
-                StringBuilder sb = new StringBuilder();
-                for (User u : users) {
-                    sb.append(i++).append(". ")
-                            .append(u.getAsMention())
-                            .append(": ")
-                            .append(Math.round(Math.random() * 100))
-                            .append("\n");
-                }
-                eb.setTitle("DICE")
-                        .setAuthor(user.getAsMention())
-                        .setDescription(sb.toString());
-                channel.sendMessage(eb.build()).queue();
-            }
-
             if (commandArgs[0].equalsIgnoreCase("set") && commandArgs.length == 1) {
                 users.add(user);
                 channel.sendMessage("Set " + user.getAsMention()).queue();
@@ -125,22 +110,6 @@ public class BetBot extends ListenerAdapter {
                     channel.sendMessage("reset " + user.getAsMention()).queue();
                     showUsers(channel);
                 }
-            }
-
-            if (commandArgs[0].equalsIgnoreCase("dice")) {
-                int i = 1;
-                StringBuilder sb = new StringBuilder();
-                for (User u : users) {
-                    sb.append(i++).append(". ")
-                            .append(u.getAsMention())
-                            .append(": ")
-                            .append(Math.round(Math.random() * 100))
-                            .append("\n");
-                }
-                eb.setTitle("DICE")
-                        .setAuthor(user.getAsTag())
-                        .setDescription(sb.toString());
-                channel.sendMessage(eb.build()).queue();
             }
 
             if (commandArgs[0].equalsIgnoreCase("start")) {
@@ -205,6 +174,22 @@ public class BetBot extends ListenerAdapter {
                 if (commandArgs[1].equalsIgnoreCase("reset")) {
 
                 }
+            }
+
+            if (commandArgs[0].equalsIgnoreCase("dice")) {
+                int i = 1;
+                StringBuilder sb = new StringBuilder();
+                for (User u : users) {
+                    sb.append(i++).append(". ")
+                            .append(u.getAsMention())
+                            .append(": ")
+                            .append(Math.round(Math.random() * 100))
+                            .append("\n");
+                }
+                eb.setTitle("DICE")
+                        .setAuthor(user.getAsTag())
+                        .setDescription(sb.toString());
+                channel.sendMessage(eb.build()).queue();
             }
         }
     }
