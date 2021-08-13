@@ -14,7 +14,9 @@ import java.util.*;
 
 public class BetBot extends ListenerAdapter {
 
-    private final static Set<User> users = new HashSet<>();
+    private final static int DEFAULT_POINT = 1000;
+
+    private final static Map<User, Integer> users = new HashMap<>();
     private final static EmbedBuilder eb = new EmbedBuilder();
 
     private static final BetInfo betInfo = new BetInfo();
@@ -54,17 +56,17 @@ public class BetBot extends ListenerAdapter {
                 eb.setTitle("BetBot")
                         .setDescription("~~\n" +
                                 "ping - ping check\n" +
-                                "user - user list\n");
-                eb.setFooter("help!");
+                                "user - user list\n")
+                        .setFooter("HELP");
                 channel.sendMessage(eb.build()).queue();
             }
 
             if (commandArgs[0].equalsIgnoreCase("ping")) {
                 long time = System.currentTimeMillis();
                 channel.sendMessage("Pong!")
-                        .queue(response -> {
-                            response.editMessageFormat("Pong: %d ms", System.currentTimeMillis() - time).queue();
-                        });
+                        .queue(response
+                                -> response.editMessageFormat("Pong: %d ms", System.currentTimeMillis() - time)
+                                .queue());
             }
 
             if (commandArgs[0].equalsIgnoreCase("user")) {
@@ -80,7 +82,7 @@ public class BetBot extends ListenerAdapter {
             }
 
             if (commandArgs[0].equalsIgnoreCase("set") && commandArgs.length == 1) {
-                users.add(user);
+                users.put(user, DEFAULT_POINT);
                 channel.sendMessage("Set " + user.getAsMention()).queue();
                 showUsers(channel);
             }
@@ -88,7 +90,7 @@ public class BetBot extends ListenerAdapter {
             if (commandArgs[0].equalsIgnoreCase("set") && commandArgs.length > 1) {
                 try {
                     User target = event.getJDA().getUserById(commandArgs[1].substring(3, 21));
-                    users.add(target);
+                    users.put(target, DEFAULT_POINT);
                     channel.sendMessage("Set " + target.getAsMention()).queue();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -107,14 +109,21 @@ public class BetBot extends ListenerAdapter {
                 if (commandArgs[1].equalsIgnoreCase("all")) {
                     users.clear();
                 } else {
-                    channel.sendMessage("reset " + user.getAsMention()).queue();
+                    try {
+                        User target = event.getJDA().getUserById(commandArgs[1].substring(3, 21));
+                        users.put(target, DEFAULT_POINT);
+                        channel.sendMessage("Set " + target.getAsMention()).queue();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        channel.sendMessage("No User").queue();
+                    }
                     showUsers(channel);
                 }
             }
 
             if (commandArgs[0].equalsIgnoreCase("start")) {
                 betInfo.clear();
-                betInfo.setTitle(commandArgs[2]);
+                betInfo.setTitle(commandArgs[1]);
                 betInfo.setUser(user);
             }
 
@@ -153,6 +162,10 @@ public class BetBot extends ListenerAdapter {
 
                 if (commandArgs[1].equalsIgnoreCase("set")) {
                     User target = event.getJDA().getUserById(commandArgs[2].substring(3, 21));
+                    if (target == null) {
+                        channel.sendMessage("").queue();
+                        return;
+                    }
                     try {
                         if (commandArgs[3].equalsIgnoreCase("y")) {
                             betInfo.getAgree().put(target, Integer.parseInt(commandArgs[4]));
@@ -176,10 +189,11 @@ public class BetBot extends ListenerAdapter {
                 }
             }
 
+            // DICE
             if (commandArgs[0].equalsIgnoreCase("dice")) {
                 int i = 1;
                 StringBuilder sb = new StringBuilder();
-                for (User u : users) {
+                for (User u : users.keySet()) {
                     sb.append(i++).append(". ")
                             .append(u.getAsMention())
                             .append(": ")
@@ -207,7 +221,7 @@ public class BetBot extends ListenerAdapter {
     private static void showUsers(MessageChannel channel) {
         int i = 1;
         StringBuilder sb = new StringBuilder();
-        for (User u : users) {
+        for (User u : users.keySet()) {
             if (!u.isBot()) {
                 sb.append(i++).append(". ").append(u.getName()).append("\n");
             }
