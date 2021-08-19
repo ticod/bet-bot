@@ -69,10 +69,6 @@ public class BetBot extends ListenerAdapter {
                                 .queue());
             }
 
-            if (commandArgs[0].equalsIgnoreCase("user")) {
-                showChannelUsers(channel);
-            }
-
             if (commandArgs[0].equalsIgnoreCase("hello")) {
                 channel.sendMessage("Hello! " + user.getAsMention()).queue();
             }
@@ -81,33 +77,15 @@ public class BetBot extends ListenerAdapter {
                 showUsers(channel);
             }
 
-            if (commandArgs[0].equalsIgnoreCase("set") && commandArgs.length == 1) {
-                users.put(user, DEFAULT_POINT);
-                channel.sendMessage("Set " + user.getAsMention()).queue();
-                showUsers(channel);
+            if (commandArgs[0].equalsIgnoreCase("user")) {
+                showChannelUsers(channel);
             }
 
-            if (commandArgs[0].equalsIgnoreCase("set") && commandArgs.length > 1) {
-                try {
-                    User target = event.getJDA().getUserById(commandArgs[1].substring(3, 21));
-                    users.put(target, DEFAULT_POINT);
-                    channel.sendMessage("Set " + target.getAsMention()).queue();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    channel.sendMessage("No User").queue();
-                }
-                showUsers(channel);
-            }
-
-            if (commandArgs[0].equalsIgnoreCase("reset") && commandArgs.length == 1) {
-                users.remove(user);
-                channel.sendMessage("reset " + user.getAsMention()).queue();
-                showUsers(channel);
-            }
-
-            if (commandArgs[0].equalsIgnoreCase("reset") && commandArgs.length > 1) {
-                if (commandArgs[1].equalsIgnoreCase("all")) {
-                    users.clear();
+            if (commandArgs[0].equalsIgnoreCase("set")) {
+                if (commandArgs.length == 1) {
+                    users.put(user, DEFAULT_POINT);
+                    channel.sendMessage("Set " + user.getAsMention()).queue();
+                    showUsers(channel);
                 } else {
                     try {
                         User target = event.getJDA().getUserById(commandArgs[1].substring(3, 21));
@@ -118,6 +96,28 @@ public class BetBot extends ListenerAdapter {
                         channel.sendMessage("No User").queue();
                     }
                     showUsers(channel);
+                }
+            }
+
+            if (commandArgs[0].equalsIgnoreCase("reset")) {
+                if (commandArgs.length == 1) {
+                    users.remove(user);
+                    channel.sendMessage("reset " + user.getAsMention()).queue();
+                    showUsers(channel);
+                } else {
+                    if (commandArgs[1].equalsIgnoreCase("all")) {
+                        users.clear();
+                    } else {
+                        try {
+                            User target = event.getJDA().getUserById(commandArgs[1].substring(3, 21));
+                            users.put(target, DEFAULT_POINT);
+                            channel.sendMessage("Set " + target.getAsMention()).queue();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            channel.sendMessage("No User").queue();
+                        }
+                        showUsers(channel);
+                    }
                 }
             }
 
