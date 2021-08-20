@@ -53,11 +53,10 @@ public class BetBot extends ListenerAdapter {
             String[] commandArgs = msg.getContentRaw().substring(2).split(" ");
 
             if (commandArgs[0].equalsIgnoreCase("help")) {
-                eb.setTitle("BetBot")
-                        .setDescription("~~\n" +
-                                "ping - ping check\n" +
-                                "user - user list\n")
-                        .setFooter("HELP");
+                eb.setTitle("BetBot Commands")
+                        .setDescription("\n~~ping - ping check\n" +
+                                "~~user - user list\n" +
+                                "~~who - BetBot user list\n");
                 channel.sendMessage(eb.build()).queue();
             }
 
