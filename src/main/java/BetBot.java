@@ -167,12 +167,15 @@ public class BetBot extends ListenerAdapter {
                         return;
                     }
                     try {
+                        int targetPoint = Integer.parseInt(commandArgs[4]);
+                        String targetVote = commandArgs[3];
+
                         if (commandArgs[3].equalsIgnoreCase("y")) {
-                            betInfo.getAgree().put(target, Integer.parseInt(commandArgs[4]));
+                            betInfo.getAgree().put(target, targetPoint);
                             eb.setTitle(target.getAsTag())
-                                    .setDescription(commandArgs[4] + " / " + commandArgs[3]);
+                                    .setDescription(targetPoint + " / " + commandArgs[3]);
                         } else if (commandArgs[3].equalsIgnoreCase("n")) {
-                            betInfo.getDisagree().put(target, Integer.parseInt(commandArgs[4]));
+                            betInfo.getDisagree().put(target, targetPoint);
                             eb.setTitle(target.getAsTag())
                                     .setDescription(commandArgs[4] + " / " + commandArgs[3]);
                         } else {
