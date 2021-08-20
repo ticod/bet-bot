@@ -228,7 +228,7 @@ public class BetBot extends ListenerAdapter {
                 sb.append(i++).append(". ").append(u.getName()).append("\n");
             }
         }
-        eb.setTitle("User List").setDescription(sb.toString());
+        eb.setTitle("BetBot User List").setDescription(sb.toString());
         channel.sendMessage(eb.build()).queue();
     }
 
@@ -240,7 +240,7 @@ public class BetBot extends ListenerAdapter {
                 sb.append(i++).append(". ").append(u.getName()).append("\n");
             }
         }
-        eb.setTitle("Betting User List").setDescription(sb.toString());
+        eb.setTitle("Channel User List").setDescription(sb.toString());
         channel.sendMessage(eb.build()).queue();
     }
 }
