@@ -1,3 +1,3 @@
 public enum BetStatus {
-    START, BETTING, VOTE_END, END,
+    INITIALIZE, BETTING, VOTE_END, END,
 }

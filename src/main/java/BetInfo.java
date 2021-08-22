@@ -12,7 +12,7 @@ public class BetInfo {
     private Integer totalPoint;
     private Map<User, Integer> agree;
     private Map<User, Integer> disagree;
-    private BetStatus betStatus = BetStatus.START;
+    private BetStatus betStatus = BetStatus.INITIALIZE;
 
     public BetInfo() {
         this.title = "";
