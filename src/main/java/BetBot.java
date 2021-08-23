@@ -72,11 +72,11 @@ public class BetBot extends ListenerAdapter {
                 channel.sendMessage("Hello! " + user.getAsMention()).queue();
             }
 
-            if (commandArgs[0].equalsIgnoreCase("who")) {
+            if (commandArgs[0].equalsIgnoreCase("user")) {
                 showUsers(channel);
             }
 
-            if (commandArgs[0].equalsIgnoreCase("user")) {
+            if (commandArgs[0].equalsIgnoreCase("betuser")) {
                 showChannelUsers(channel);
             }
 
@@ -127,6 +127,48 @@ public class BetBot extends ListenerAdapter {
             }
 
             if (commandArgs[0].equalsIgnoreCase("bet")) {
+                if (commandArgs.length == 3) {
+
+                } else if (commandArgs.length == 4) {
+
+                }
+            }
+
+            if (commandArgs[0].equalsIgnoreCase("voteend")) {
+
+            }
+
+            if (commandArgs[0].equalsIgnoreCase("betend")) {
+                betInfo.clear();
+            }
+
+            if (commandArgs[0].equalsIgnoreCase("leaderboard")) {
+                if (betInfo.getBetStatus() != BetStatus.BETTING) {
+                    return;
+                }
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("\uD83D\uDC4D\n");
+                for (User u : betInfo.getAgree().keySet()) {
+                    sb.append(u.getAsTag())
+                            .append(": ")
+                            .append(betInfo.getAgree().get(u))
+                            .append("\n");
+                }
+                sb.append("\n\uD83D\uDC4E\n");
+                for (User u : betInfo.getDisagree().keySet()) {
+                    sb.append(u.getAsTag())
+                            .append(": ")
+                            .append(betInfo.getDisagree().get(u))
+                            .append("\n");
+                }
+                eb.setTitle("- " + betInfo.getTitle())
+                        .setAuthor(betInfo.getUser().getAsTag())
+                        .setDescription(sb.toString());
+                channel.sendMessage(eb.build()).queue();
+            }
+
+            if (commandArgs[0].equalsIgnoreCase("bet")) {
                 if (commandArgs[1].equalsIgnoreCase("start")) {
                     betInfo.clear();
                     betInfo.setTitle(commandArgs[2]);
@@ -135,28 +177,6 @@ public class BetBot extends ListenerAdapter {
 
                 if (commandArgs[1].equalsIgnoreCase("end")) {
                     betInfo.clear();
-                }
-
-                if (commandArgs[1].equalsIgnoreCase("leaderboard")) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("\uD83D\uDC4D\n");
-                    for (User u : betInfo.getAgree().keySet()) {
-                        sb.append(u.getAsTag())
-                                .append(": ")
-                                .append(betInfo.getAgree().get(u))
-                                .append("\n");
-                    }
-                    sb.append("\n\uD83D\uDC4E\n");
-                    for (User u : betInfo.getDisagree().keySet()) {
-                        sb.append(u.getAsTag())
-                                .append(": ")
-                                .append(betInfo.getDisagree().get(u))
-                                .append("\n");
-                    }
-                    eb.setTitle("- " + betInfo.getTitle())
-                            .setAuthor(betInfo.getUser().getAsTag())
-                            .setDescription(sb.toString());
-                    channel.sendMessage(eb.build()).queue();
                 }
 
                 if (commandArgs[1].equalsIgnoreCase("set")) {
