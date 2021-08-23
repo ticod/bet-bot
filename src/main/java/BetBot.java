@@ -256,7 +256,10 @@ public class BetBot extends ListenerAdapter {
         StringBuilder sb = new StringBuilder();
         for (User u : users.keySet()) {
             if (!u.isBot()) {
-                sb.append(i++).append(". ").append(u.getName()).append("\n");
+                sb.append(i++).append(". ").append(u.getName())
+                        .append(" : ")
+                        .append(users.get(u))
+                        .append("\n");
             }
         }
         eb.setTitle("BetBot User List").setDescription(sb.toString());
