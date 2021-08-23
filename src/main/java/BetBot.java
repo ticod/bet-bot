@@ -147,7 +147,7 @@ public class BetBot extends ListenerAdapter {
                             betInfo.getAgree().put(user, targetPoint);
                             eb.setTitle(user.getAsTag())
                                     .setDescription(targetPoint + " / \uD83D\uDC4D");
-                        } else if (commandArgs[3].equalsIgnoreCase("n")) {
+                        } else if (targetVote.equalsIgnoreCase("n")) {
                             betInfo.getDisagree().put(user, targetPoint);
                             eb.setTitle(user.getAsTag())
                                     .setDescription(targetPoint + " / \uD83D\uDC4E");
@@ -182,7 +182,7 @@ public class BetBot extends ListenerAdapter {
                             betInfo.getAgree().put(target, targetPoint);
                             eb.setTitle(target.getAsTag())
                                     .setDescription(targetPoint + " / \uD83D\uDC4D");
-                        } else if (commandArgs[3].equalsIgnoreCase("n")) {
+                        } else if (targetVote.equalsIgnoreCase("n")) {
                             betInfo.getDisagree().put(target, targetPoint);
                             eb.setTitle(target.getAsTag())
                                     .setDescription(targetPoint + " / \uD83D\uDC4E");
