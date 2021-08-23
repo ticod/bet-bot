@@ -124,13 +124,47 @@ public class BetBot extends ListenerAdapter {
                 betInfo.clear();
                 betInfo.setTitle(commandArgs[1]);
                 betInfo.setUser(user);
+                betInfo.setBetStatus(BetStatus.BETTING);
             }
 
             if (commandArgs[0].equalsIgnoreCase("bet")) {
                 if (commandArgs.length == 3) {
 
                 } else if (commandArgs.length == 4) {
+                    User target = event.getJDA().getUserById(commandArgs[1].substring(3, 21));
+                    if (target == null) {
+                        channel.sendMessage("No User..").queue();
+                        return;
+                    }
+                    if (users.get(target) == null) {
+                        channel.sendMessage("First, set user. (~~set / ~~set @user)").queue();
+                        return;
+                    }
+                    try {
+                        int targetPoint = Integer.parseInt(commandArgs[3]);
+                        int userPoint = users.get(target);
+                        if (userPoint < targetPoint) {
+                            channel.sendMessage("lack of points..").queue();
+                            return;
+                        }
 
+                        String targetVote = commandArgs[2];
+
+                        if (targetVote.equalsIgnoreCase("y")) {
+                            betInfo.getAgree().put(target, targetPoint);
+                            eb.setTitle(target.getAsTag())
+                                    .setDescription(targetPoint + " / \uD83D\uDC4D");
+                        } else if (commandArgs[3].equalsIgnoreCase("n")) {
+                            betInfo.getDisagree().put(target, targetPoint);
+                            eb.setTitle(target.getAsTag())
+                                    .setDescription(targetPoint + " / \uD83D\uDC4E");
+                        } else {
+                            eb.setTitle("~~bet set (user) (y/n) (point)");
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                    channel.sendMessage(eb.build()).queue();
                 }
             }
 
@@ -177,33 +211,6 @@ public class BetBot extends ListenerAdapter {
 
                 if (commandArgs[1].equalsIgnoreCase("end")) {
                     betInfo.clear();
-                }
-
-                if (commandArgs[1].equalsIgnoreCase("set")) {
-                    User target = event.getJDA().getUserById(commandArgs[2].substring(3, 21));
-                    if (target == null) {
-                        channel.sendMessage("").queue();
-                        return;
-                    }
-                    try {
-                        int targetPoint = Integer.parseInt(commandArgs[4]);
-                        String targetVote = commandArgs[3];
-
-                        if (commandArgs[3].equalsIgnoreCase("y")) {
-                            betInfo.getAgree().put(target, targetPoint);
-                            eb.setTitle(target.getAsTag())
-                                    .setDescription(targetPoint + " / " + commandArgs[3]);
-                        } else if (commandArgs[3].equalsIgnoreCase("n")) {
-                            betInfo.getDisagree().put(target, targetPoint);
-                            eb.setTitle(target.getAsTag())
-                                    .setDescription(commandArgs[4] + " / " + commandArgs[3]);
-                        } else {
-                            eb.setTitle("~~bet set (user) (y/n) (point)");
-                        }
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                    }
-                    channel.sendMessage(eb.build()).queue();
                 }
 
                 if (commandArgs[1].equalsIgnoreCase("reset")) {
