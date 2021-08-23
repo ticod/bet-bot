@@ -129,7 +129,35 @@ public class BetBot extends ListenerAdapter {
 
             if (commandArgs[0].equalsIgnoreCase("bet")) {
                 if (commandArgs.length == 3) {
+                    if (users.get(user) == null) {
+                        channel.sendMessage("First, set user. (~~set / ~~set @user)").queue();
+                        return;
+                    }
+                    try {
+                        int targetPoint = Integer.parseInt(commandArgs[2]);
+                        int userPoint = users.get(user);
+                        if (userPoint < targetPoint) {
+                            channel.sendMessage("lack of points..").queue();
+                            return;
+                        }
 
+                        String targetVote = commandArgs[1];
+
+                        if (targetVote.equalsIgnoreCase("y")) {
+                            betInfo.getAgree().put(user, targetPoint);
+                            eb.setTitle(user.getAsTag())
+                                    .setDescription(targetPoint + " / \uD83D\uDC4D");
+                        } else if (commandArgs[3].equalsIgnoreCase("n")) {
+                            betInfo.getDisagree().put(user, targetPoint);
+                            eb.setTitle(user.getAsTag())
+                                    .setDescription(targetPoint + " / \uD83D\uDC4E");
+                        } else {
+                            eb.setTitle("~~bet set (y/n) (point)");
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                    channel.sendMessage(eb.build()).queue();
                 } else if (commandArgs.length == 4) {
                     User target = event.getJDA().getUserById(commandArgs[1].substring(3, 21));
                     if (target == null) {
@@ -173,6 +201,14 @@ public class BetBot extends ListenerAdapter {
             }
 
             if (commandArgs[0].equalsIgnoreCase("betend")) {
+                if (commandArgs[1].equalsIgnoreCase("y")) {
+
+                } else if (commandArgs[1].equalsIgnoreCase("n")) {
+
+                // error
+                } else {
+                    return;
+                }
                 betInfo.clear();
             }
 
