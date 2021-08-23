@@ -241,6 +241,10 @@ public class BetBot extends ListenerAdapter {
     }
 
     private static void showUsers(MessageChannel channel) {
+        if (users.keySet().isEmpty()) {
+            channel.sendMessage("No Users").queue();
+            return;
+        }
         int i = 1;
         StringBuilder sb = new StringBuilder();
         for (User u : users.keySet()) {
