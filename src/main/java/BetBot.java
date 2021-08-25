@@ -214,7 +214,8 @@ public class BetBot extends ListenerAdapter {
             }
 
             if (commandArgs[0].equalsIgnoreCase("leaderboard")) {
-                if (betInfo.getBetStatus() != BetStatus.BETTING) {
+                if (betInfo.getBetStatus() == BetStatus.INITIALIZE
+                        && betInfo.getBetStatus() == BetStatus.END) {
                     return;
                 }
 
