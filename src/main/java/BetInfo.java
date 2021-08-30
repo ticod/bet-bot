@@ -29,4 +29,8 @@ public class BetInfo {
         this.agree.clear();
         this.disagree.clear();
     }
+
+    public boolean checkBetting(User user) {
+        return agree.get(user) != null || disagree.get(user) != null;
+    }
 }
