@@ -133,6 +133,12 @@ public class BetBot extends ListenerAdapter {
                         channel.sendMessage("First, set user. (~~set / ~~set @user)").queue();
                         return;
                     }
+
+                    if (betInfo.checkBetting(user)) {
+                        channel.sendMessage("You have already placed a bet.").queue();
+                        return;
+                    }
+
                     try {
                         int targetPoint = Integer.parseInt(commandArgs[2]);
                         int userPoint = users.get(user);
@@ -299,7 +305,7 @@ public class BetBot extends ListenerAdapter {
                         .append(users.get(u))
                         .append("\n");
             }
-        }
+         }
         eb.setTitle("BetBot User List").setDescription(sb.toString());
         channel.sendMessage(eb.build()).queue();
     }
