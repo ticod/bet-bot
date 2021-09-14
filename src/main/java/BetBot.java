@@ -204,7 +204,7 @@ public class BetBot extends ListenerAdapter {
 
             if (commandArgs[0].equalsIgnoreCase("voteend")) {
                 betInfo.setBetStatus(BetStatus.VOTE_END);
-                channel.sendMessage("Vote End!").queue();
+                channel.sendMessage("Vote End! Wait for the result.").queue();
             }
 
             if (commandArgs[0].equalsIgnoreCase("betend")) {
