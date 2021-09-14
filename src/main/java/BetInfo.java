@@ -28,6 +28,7 @@ public class BetInfo {
         this.totalPoint = 0;
         this.agree.clear();
         this.disagree.clear();
+        betStatus = BetStatus.INITIALIZE;
     }
 
     public boolean checkBetting(User user) {
