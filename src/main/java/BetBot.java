@@ -185,10 +185,12 @@ public class BetBot extends ListenerAdapter {
                         String targetVote = commandArgs[2];
 
                         if (targetVote.equalsIgnoreCase("y")) {
+                            betInfo.setTotalPoint(betInfo.getTotalPoint() + targetPoint);
                             betInfo.getAgree().put(target, targetPoint);
                             eb.setTitle(target.getAsTag())
                                     .setDescription(targetPoint + " / \uD83D\uDC4D");
                         } else if (targetVote.equalsIgnoreCase("n")) {
+                            betInfo.setTotalPoint(betInfo.getTotalPoint() + targetPoint);
                             betInfo.getDisagree().put(target, targetPoint);
                             eb.setTitle(target.getAsTag())
                                     .setDescription(targetPoint + " / \uD83D\uDC4E");
