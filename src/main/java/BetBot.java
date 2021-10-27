@@ -52,6 +52,7 @@ public class BetBot extends ListenerAdapter {
         if (msg.getContentRaw().startsWith("~~")) {
             String[] commandArgs = msg.getContentRaw().substring(2).split(" ");
 
+            // 도움말
             if (commandArgs[0].equalsIgnoreCase("help")) {
                 eb.setTitle("BetBot Commands")
                         .setDescription("\n\\~\\~ping - ping check\n" +
@@ -60,6 +61,7 @@ public class BetBot extends ListenerAdapter {
                 channel.sendMessage(eb.build()).queue();
             }
 
+            // 핑 테스트
             if (commandArgs[0].equalsIgnoreCase("ping")) {
                 long time = System.currentTimeMillis();
                 channel.sendMessage("Pong!")
@@ -68,23 +70,29 @@ public class BetBot extends ListenerAdapter {
                                 .queue());
             }
 
+            // 인사
             if (commandArgs[0].equalsIgnoreCase("hello")) {
                 channel.sendMessage("Hello! " + user.getAsMention()).queue();
             }
 
+            // BetBot에 참여한 유저 확인
             if (commandArgs[0].equalsIgnoreCase("user")) {
                 showUsers(channel);
             }
 
+            // 채널 내 유저 확인
             if (commandArgs[0].equalsIgnoreCase("betuser")) {
                 showChannelUsers(channel);
             }
 
+            // 유저 설정
             if (commandArgs[0].equalsIgnoreCase("set")) {
+                // 본인 설정시
                 if (commandArgs.length == 1) {
                     users.put(user, DEFAULT_POINT);
                     channel.sendMessage("Set " + user.getAsMention()).queue();
                     showUsers(channel);
+                // 다른 유저 설정시
                 } else {
                     try {
                         User target = event.getJDA().getUserById(commandArgs[1].substring(3, 21));
@@ -98,11 +106,14 @@ public class BetBot extends ListenerAdapter {
                 }
             }
 
+            // 유저 설정 해제
             if (commandArgs[0].equalsIgnoreCase("reset")) {
+                // 본인 설정 해제시
                 if (commandArgs.length == 1) {
                     users.remove(user);
                     channel.sendMessage("reset " + user.getAsMention()).queue();
                     showUsers(channel);
+                // 다른 유저 설정 해제시
                 } else {
                     if (commandArgs[1].equalsIgnoreCase("all")) {
                         users.clear();
@@ -120,6 +131,7 @@ public class BetBot extends ListenerAdapter {
                 }
             }
 
+            // 베팅 시작 (~~start [주제])
             if (commandArgs[0].equalsIgnoreCase("start")) {
                 betInfo.clear();
                 betInfo.setTitle(commandArgs[1]);
@@ -127,7 +139,11 @@ public class BetBot extends ListenerAdapter {
                 betInfo.setBetStatus(BetStatus.BETTING);
             }
 
+            // 베팅 유저 참여
+            // ~~bet [y/n] [point] : 본인 베팅 참여시
+            // ~~bet [user] [y/n] [point] : 다른 유저 베팅 참여시킬 때
             if (commandArgs[0].equalsIgnoreCase("bet")) {
+                // ~~bet [y/n] [point] : 본인 베팅 참여시
                 if (commandArgs.length == 3) {
                     if (users.get(user) == null) {
                         channel.sendMessage("First, set user. (~~set / ~~set @user)").queue();
@@ -164,6 +180,7 @@ public class BetBot extends ListenerAdapter {
                         e.printStackTrace();
                     }
                     channel.sendMessage(eb.build()).queue();
+                // ~~bet [user] [y/n] [point] : 다른 유저 베팅 참여시킬 때
                 } else if (commandArgs.length == 4) {
                     User target = event.getJDA().getUserById(commandArgs[1].substring(3, 21));
                     if (target == null) {
@@ -204,11 +221,13 @@ public class BetBot extends ListenerAdapter {
                 }
             }
 
+            // 베팅 종료 (참여 불가)
             if (commandArgs[0].equalsIgnoreCase("voteend")) {
                 betInfo.setBetStatus(BetStatus.VOTE_END);
                 channel.sendMessage("Vote End! Wait for the result.").queue();
             }
 
+            // 결과 발표 (~~end [y/n])
             if (commandArgs[0].equalsIgnoreCase("betend")) {
                 if (commandArgs[1].equalsIgnoreCase("y")) {
 
@@ -221,6 +240,7 @@ public class BetBot extends ListenerAdapter {
                 betInfo.clear();
             }
 
+            // 유저들 포인트 보기
             if (commandArgs[0].equalsIgnoreCase("leaderboard")) {
                 if (betInfo.getBetStatus() == BetStatus.INITIALIZE
                         && betInfo.getBetStatus() == BetStatus.END) {
@@ -248,23 +268,7 @@ public class BetBot extends ListenerAdapter {
                 channel.sendMessage(eb.build()).queue();
             }
 
-            if (commandArgs[0].equalsIgnoreCase("bet")) {
-                if (commandArgs[1].equalsIgnoreCase("start")) {
-                    betInfo.clear();
-                    betInfo.setTitle(commandArgs[2]);
-                    betInfo.setUser(user);
-                }
-
-                if (commandArgs[1].equalsIgnoreCase("end")) {
-                    betInfo.clear();
-                }
-
-                if (commandArgs[1].equalsIgnoreCase("reset")) {
-
-                }
-            }
-
-            // DICE
+            // 주사위 굴리기
             if (commandArgs[0].equalsIgnoreCase("dice")) {
                 int i = 1;
                 StringBuilder sb = new StringBuilder();
