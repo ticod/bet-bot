@@ -232,13 +232,30 @@ public class BetBot extends ListenerAdapter {
             // 결과 발표 (~~end [y/n])
             if (commandArgs[0].equalsIgnoreCase("betend")) {
                 if (commandArgs[1].equalsIgnoreCase("y")) {
-
+                    // 포인트 합 계산
+                    int agreeTotalPoint = 0;
+                    for (User u : betInfo.getAgree().keySet()) {
+                        agreeTotalPoint += betInfo.getAgree().get(u);
+                    }
+                    for (User u : betInfo.getAgree().keySet()) {
+                        users.put(u, users.get(u) + (betInfo.getTotalPoint() - agreeTotalPoint)
+                                / agreeTotalPoint / betInfo.getAgree().get(u));
+                    }
                 } else if (commandArgs[1].equalsIgnoreCase("n")) {
-
+                    // 포인트 합 계산
+                    int disagreeTotalPoint = 0;
+                    for (User u : betInfo.getDisagree().keySet()) {
+                        disagreeTotalPoint += betInfo.getAgree().get(u);
+                    }
+                    for (User u : betInfo.getDisagree().keySet()) {
+                        users.put(u, users.get(u) + (betInfo.getTotalPoint() - disagreeTotalPoint)
+                                / disagreeTotalPoint / betInfo.getDisagree().get(u));
+                    }
                 // error
                 } else {
                     return;
                 }
+                channel.sendMessage("Betting End!").queue();
                 betInfo.clear();
             }
 
